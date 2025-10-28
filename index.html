@@ -1,75 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8" />
 <title>Rite Generator</title>
 <style>
   body {
     font-family: monospace;
-    background: #0e0e10;
-    color: #f4f4f4;
-    padding: 20px;
+    background: #0f1113;
+    color: #e6eef0;
+    padding: 18px;
+    max-width: 820px;
+    margin: 0 auto;
   }
-  h2 { color: #ff5555; }
-  label { display: block; margin-top: 10px; }
-  input, select {
-    width: 100%;
-    padding: 6px;
-    background: #1e1e22;
-    color: #fff;
-    border: 1px solid #333;
-    border-radius: 5px;
+  h2 { color: #f08a5d; margin: 0 0 12px 0; }
+  label { display:block; margin-top:10px; font-size:14px; }
+  input[type="text"], input[type="number"], select {
+    width:100%;
+    padding:8px;
+    margin-top:6px;
+    background:#131417;
+    color:#e6eef0;
+    border:1px solid #26292c;
+    border-radius:6px;
+    box-sizing:border-box;
+    font-family:monospace;
   }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .row > * { flex:1; min-width:220px; }
   button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: #ff5555;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    margin-top:14px;
+    padding:10px 14px;
+    background:#f08a5d;
+    color:#082029;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
   }
   textarea {
-    width: 100%;
-    height: 280px;
-    margin-top: 15px;
-    background: #1e1e22;
-    color: #00ff9c;
-    border: 1px solid #333;
-    border-radius: 5px;
-    padding: 10px;
+    width:100%;
+    height:320px;
+    margin-top:14px;
+    background:#0f1315;
+    color:#b9f6d9;
+    border:1px solid #222426;
+    border-radius:6px;
+    padding:10px;
+    font-family:monospace;
+    font-size:14px;
+    white-space:pre-wrap;
   }
+  .small { font-size:13px; color:#9fb2b1; margin-top:6px; }
+  #copyBtn {
+    background:#38c172;
+    color:#03160d;
+    margin-left:10px;
+  }
+  .btnRow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
 </style>
 </head>
 <body>
-  <h2>☰ Rite Format Generator ☰</h2>
+  <h2>☰ Rite Format Generator</h2>
 
-  <label>Host (Discord ID or tag):</label>
-  <input id="host" placeholder="<@1234567890>">
+  <label>Host (Discord mention or ID):</label>
+  <input id="host" placeholder="<@320597836758777856>" type="text">
 
   <label>Rite Type:</label>
   <select id="rite">
-    <option value="Ascension Ceremony">Ascension Ceremony</option>
-    <option value="Korriban Excursion">Korriban Excursion</option>
-    <option value="Rite of Advancement">Rite of Advancement</option>
-    <option value="Rite of Lore">Rite of Lore</option>
-    <option value="Rite of Doctrine">Rite of Doctrine</option>
-    <option value="Rite of Passage">Rite of Passage</option>
+    <option>Ascension Ceremony</option>
+    <option>Korriban Excursion</option>
+    <option>Rite of Advancement</option>
+    <option>Rite of Lore</option>
+    <option>Rite of Doctrine</option>
+    <option>Rite of Passage</option>
   </select>
 
   <label>Server Name / Private Server Code:</label>
-  <input id="server" placeholder="Server name or code">
+  <input id="server" placeholder="Server name or code" type="text">
 
-  <button onclick="generate()">Generate Message</button>
+  <div class="row">
+    <div>
+      <label>Start delay (minutes):</label>
+      <input id="delay" type="number" min="0" value="10">
+      <div class="small">Set number of minutes from current Newfoundland time (default 10).</div>
+    </div>
 
-  <textarea id="output" readonly></textarea>
+    <div>
+      <label>Timestamp style:</label>
+      <select id="tsStyle">
+        <option value="R">Relative (e.g. &lt;t:...:R&gt;)</option>
+        <option value="f">Short (e.g. &lt;t:...:f&gt;)</option>
+        <option value="F">Long (e.g. &lt;t:...:F&gt;)</option>
+      </select>
+      <div class="small">Choose which Discord timestamp format to insert.</div>
+    </div>
+  </div>
+
+  <div class="btnRow">
+    <button id="generateBtn">Generate Message</button>
+    <button id="copyBtn">Copy to Clipboard</button>
+  </div>
+
+  <textarea id="output" readonly placeholder="Generated message will appear here"></textarea>
 
 <script>
-function generate() {
-  const host = document.getElementById('host').value || "<@000000000000000000>";
-  const rite = document.getElementById('rite').value;
-  const server = document.getElementById('server').value || "N/A";
-
+(function(){
   const roleMap = {
     "Ascension Ceremony": "<@&1151341324298092614>",
     "Korriban Excursion": "<@&1151341234615484439>",
@@ -79,31 +114,66 @@ function generate() {
     "Rite of Passage": "<@&873072129816551427>"
   };
 
-  const location = (rite === "Korriban Excursion") ? "Korriban" : "Acolyte Barracks";
-
-  // Newfoundland Time = UTC-2:30
-  const now = new Date();
-  const utcMillis = now.getTime() + now.getTimezoneOffset() * 60000;
-  const newfoundlandOffsetMillis = (-2.5) * 60 * 60 * 1000;
-  const newfoundlandNow = new Date(utcMillis + newfoundlandOffsetMillis);
-  const startTime = new Date(newfoundlandNow.getTime() + 10 * 60 * 1000);
-  const discordTimestamp = `<t:${Math.floor(startTime.getTime() / 1000)}:R>`;
-
   const sithEmoji = "<:sith:1155672133838581860>";
-  const header = `☰  ${sithEmoji}   | Rite of ${rite} |  ${sithEmoji}  ☰`;
-  const content = `╭─────────────────────────╮
-Host: ${host}
-Location: ${location} | ${server}
-Status: Pending
-Passed: 
-Starting time: ${discordTimestamp}
-Time of conclusion : 
-Note: Do not attend if you are on cooldown or at the rank of Youngling III+ in TJO.
-╰─────────────────────────╯
-${roleMap[rite]}`;
+  const btnGen = document.getElementById('generateBtn');
+  const btnCopy = document.getElementById('copyBtn');
+  const output = document.getElementById('output');
 
-  document.getElementById('output').value = `${header}\n${content}`;
-}
+  function toNewfoundlandNow() {
+    const now = new Date();
+    const utcMillis = now.getTime() + now.getTimezoneOffset() * 60000;
+    const nfOffsetMillis = (-2.5) * 60 * 60 * 1000; // UTC-2:30
+    return new Date(utcMillis + nfOffsetMillis);
+  }
+
+  function buildHeader(rite) {
+    const noPrefix = ["Ascension Ceremony", "Korriban Excursion"];
+    const title = noPrefix.includes(rite) ? rite : `Rite of ${rite.replace(/^Rite of /i, "").trim()}`;
+    return `☰  ${sithEmoji}   | ${title} |  ${sithEmoji}  ☰`;
+  }
+
+  function buildTimestamp(dateObj, style) {
+    const secs = Math.floor(dateObj.getTime() / 1000);
+    return `<t:${secs}:${style}>`;
+  }
+
+  btnGen.addEventListener('click', () => {
+    const host = (document.getElementById('host').value || "<@000000000000000000>").trim();
+    const rite = (document.getElementById('rite').value || "Ascension Ceremony").trim();
+    const server = (document.getElementById('server').value || "N/A").trim();
+    const delayMinutes = Number(document.getElementById('delay').value || 10);
+    const tsStyle = document.getElementById('tsStyle').value || "R";
+
+    const location = (rite === "Korriban Excursion") ? "Korriban" : "Acolyte Barracks";
+    const nfNow = toNewfoundlandNow();
+    const start = new Date(nfNow.getTime() + Math.max(0, delayMinutes) * 60 * 1000);
+    const discordTimestamp = buildTimestamp(start, tsStyle);
+    const header = buildHeader(rite);
+
+    const content = [
+      "╭─────────────────────────╮",
+      `Host: ${host}`,
+      `Location: ${location} | ${server}`,
+      `Status: Pending`,
+      `Passed: `,
+      `Starting time: ${discordTimestamp}`,
+      `Time of conclusion : `,
+      `Note: Do not attend if you are on cooldown or at the rank of Youngling III+ in TJO.`,
+      "╰─────────────────────────╯",
+      roleMap[rite] || ""
+    ].join("\n");
+
+    output.value = header + "\n" + content;
+  });
+
+  btnCopy.addEventListener('click', () => {
+    if (!output.value.trim()) return alert("No message to copy! Generate one first.");
+    output.select();
+    document.execCommand("copy");
+    btnCopy.textContent = "Copied!";
+    setTimeout(() => btnCopy.textContent = "Copy to Clipboard", 1500);
+  });
+})();
 </script>
 </body>
 </html>
