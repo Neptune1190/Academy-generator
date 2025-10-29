@@ -33,6 +33,10 @@
     background: #4caf50;
     margin-left: 10px;
   }
+  #concludeBtn {
+    background: #2196f3;
+    margin-left: 10px;
+  }
   textarea {
     width: 100%;
     height: 280px;
@@ -73,6 +77,9 @@
   <label>Server Name / Private Server Code:</label>
   <input id="server" placeholder="Server name or code">
 
+  <label>Passed Members (separate with commas):</label>
+  <input id="passed" placeholder="<@1111>, <@2222>">
+
   <div class="row">
     <div>
       <label>Start delay (minutes):</label>
@@ -91,6 +98,7 @@
   <div style="margin-top:15px;">
     <button id="generateBtn">Generate Message</button>
     <button id="copyBtn">Copy to Clipboard</button>
+    <button id="concludeBtn">Conclude Rite</button>
   </div>
 
   <textarea id="output" readonly></textarea>
@@ -107,9 +115,10 @@
   };
 
   const sithEmoji = "<:sith:1155672133838581860>";
+  const output = document.getElementById('output');
   const generateBtn = document.getElementById('generateBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const output = document.getElementById('output');
+  const copyBtn = document.getElementById('copyBtn');
+  const concludeBtn = document.getElementById('concludeBtn');
 
   function buildHeader(rite) {
     const noPrefix = ["Ascension Ceremony", "Korriban Excursion"];
@@ -124,16 +133,19 @@
     return `<t:${secs}:${style}>`;
   }
 
+  function getCurrentDiscordTimestamp(style) {
+    const now = new Date();
+    return buildTimestamp(now, style);
+  }
+
   generateBtn.addEventListener('click', () => {
-    const host = (document.getElementById('host').value || "<@000000000000000000>").trim();
+    const host = (document.getElementById('host').value || "<@320597836758777856>").trim();
     const rite = (document.getElementById('rite').value || "Ascension Ceremony").trim();
     const server = (document.getElementById('server').value || "N/A").trim();
     const delayMinutes = Number(document.getElementById('delay').value || 10);
     const tsStyle = document.getElementById('tsStyle').value || "R";
 
     const location = (rite === "Korriban Excursion") ? "Korriban" : "Acolyte Barracks";
-
-    // Use user's system timezone automatically
     const start = new Date(Date.now() + Math.max(0, delayMinutes) * 60 * 1000);
     const discordTimestamp = buildTimestamp(start, tsStyle);
     const header = buildHeader(rite);
@@ -152,6 +164,23 @@
     ].join("\n");
 
     output.value = header + "\n" + content;
+  });
+
+  concludeBtn.addEventListener('click', () => {
+    if (!output.value.trim()) return alert("No message to conclude! Generate one first.");
+    const tsStyle = document.getElementById('tsStyle').value || "R";
+    const passed = document.getElementById('passed').value.trim();
+    const conclusion = getCurrentDiscordTimestamp(tsStyle);
+
+    let newOutput = output.value
+      .replace(/Status: *Pending/i, "Status: Completed")
+      .replace(/Time of conclusion *:.*$/m, `Time of conclusion : ${conclusion}`);
+
+    if (passed) {
+      newOutput = newOutput.replace(/Passed:.*$/m, `Passed: ${passed}`);
+    }
+
+    output.value = newOutput;
   });
 
   copyBtn.addEventListener('click', () => {
