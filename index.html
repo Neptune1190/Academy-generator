@@ -30,8 +30,12 @@
     border-radius: 5px;
     cursor: pointer;
   }
-  #copyBtn, #copyLogBtn {
+  #copyBtn {
     background: #4caf50;
+    margin-left: 10px;
+  }
+   #copyLogBtn {
+    background: #994caf;
     margin-left: 10px;
   }
   #concludeBtn {
@@ -272,7 +276,7 @@
     logOutput.value = logContent;
     logWrapper.style.display = "flex";
 
-    // show the top-row Copy Log button so it lines up with other buttons
+    
     copyLogBtn.style.display = "inline-block";
   });
 
