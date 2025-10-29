@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Rite Generator</title>
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
 <style>
   body {
     font-family: monospace;
@@ -139,7 +140,7 @@
   }
 
   generateBtn.addEventListener('click', () => {
-    const host = (document.getElementById('host').value || "<@320597836758777856>").trim();
+    const host = (document.getElementById('host').value || "<@000000000000000000>").trim();
     const rite = (document.getElementById('rite').value || "Ascension Ceremony").trim();
     const server = (document.getElementById('server').value || "N/A").trim();
     const delayMinutes = Number(document.getElementById('delay').value || 10);
