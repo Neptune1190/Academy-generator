@@ -108,15 +108,8 @@
 
   const sithEmoji = "<:sith:1155672133838581860>";
   const generateBtn = document.getElementById('generateBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const output = document.getElementById('output');
-
-  function toNewfoundlandNow() {
-    const now = new Date();
-    const utcMillis = now.getTime() + now.getTimezoneOffset() * 60000;
-    const nfOffsetMillis = (-2.5) * 60 * 60 * 1000;
-    return new Date(utcMillis + nfOffsetMillis);
-  }
+    const copyBtn = document.getElementById('copyBtn');
+    const output = document.getElementById('output');
 
   function buildHeader(rite) {
     const noPrefix = ["Ascension Ceremony", "Korriban Excursion"];
@@ -139,8 +132,9 @@
     const tsStyle = document.getElementById('tsStyle').value || "R";
 
     const location = (rite === "Korriban Excursion") ? "Korriban" : "Acolyte Barracks";
-    const nfNow = toNewfoundlandNow();
-    const start = new Date(nfNow.getTime() + Math.max(0, delayMinutes) * 60 * 1000);
+
+    // Use user's system timezone automatically
+    const start = new Date(Date.now() + Math.max(0, delayMinutes) * 60 * 1000);
     const discordTimestamp = buildTimestamp(start, tsStyle);
     const header = buildHeader(rite);
 
