@@ -195,7 +195,7 @@
     const discordTimestamp = buildTimestamp(start, tsStyle);
     const header = buildHeader(rite);
 
-    const content = [
+    const mainContent = [
       "╭─────────────────────────╮",
       `Host: ${host}`,
       `Location: ${location} | ${server}`,
@@ -208,7 +208,15 @@
       roleMap[rite] || ""
     ].join("\n");
 
-    output.value = header + "\n" + content;
+    let finalContent = mainContent;
+    if (rite === "Rite of Passage") {
+      finalContent +=
+        "\n\nSith Academy Roblox Group: https://www.roblox.com/groups/14810122/Sith-Academy#!/about" +
+        "\nSith Academy Discord Server: https://discord.gg/ZPXTgSWjAS";
+    }
+
+    output.value = header + "\n" + finalContent;
+
     logWrapper.style.display = "none";
     logOutput.value = "";
     copyLogBtn.style.display = "none";
@@ -260,7 +268,9 @@
 
   copyBtn.addEventListener('click', () => copyText(output, copyBtn, "Copied!"));
   copyLogBtn.addEventListener('click', () => copyText(logOutput, copyLogBtn, "Copied!"));
+
   const FEEDBACK_KEY = "feedbackShown";
+
   function showFeedbackPopup() {
     if (document.getElementById("feedbackOverlay")) return;
 
