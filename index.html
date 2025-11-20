@@ -30,18 +30,9 @@
     border-radius: 5px;
     cursor: pointer;
   }
-  #copyBtn {
-    background: #4caf50;
-    margin-left: 10px;
-  }
-  #copyLogBtn {
-    background: #994caf;
-    margin-left: 10px;
-  }
-  #concludeBtn {
-    background: #2196f3;
-    margin-left: 10px;
-  }
+  #copyBtn { background: #4caf50; margin-left: 10px; }
+  #copyLogBtn { background: #994caf; margin-left: 10px; }
+  #concludeBtn { background: #2196f3; margin-left: 10px; }
   textarea {
     background: #1e1e22;
     color: #00ff9c;
@@ -53,114 +44,79 @@
     overflow-y: auto;
     white-space: pre;
   }
-  #logOutput {
-    height: 280px;
-  }
-  .row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .row > div {
-    flex: 1;
-    min-width: 200px;
-  }
-  #outputContainer {
-    display: flex;
-    gap: 15px;
-    margin-top: 15px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-  #outputWrapper, #logWrapper {
-    flex: 1 1 450px;
-    display: flex;
-    flex-direction: column;
-    min-width: 350px;
-  }
-  #logWrapper {
-    display: none;
-  }
-  #logWrapper label {
-    margin-bottom: 5px;
-  }
-  #logWrapper .inner-copy {
-    display: none;
-  }
-  footer {
-    text-align: center;
-    margin-top: 25px;
-    color: #777;
-    font-size: 0.9em;
-  }
+  #logOutput { height: 280px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > div { flex: 1; min-width: 200px; }
+  #outputContainer { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; align-items: flex-start; }
+  #outputWrapper, #logWrapper { flex: 1 1 450px; display: flex; flex-direction: column; min-width: 350px; }
+  #logWrapper { display: none; }
+  #logWrapper label { margin-bottom: 5px; }
+  #logWrapper .inner-copy { display: none; }
+  footer { text-align: center; margin-top: 25px; color: #777; font-size: 0.9em; }
   @media (max-width: 950px) {
-    #outputContainer {
-      flex-direction: column;
-    }
-    #outputWrapper, #logWrapper {
-      width: 100%;
-    }
+    #outputContainer { flex-direction: column; }
+    #outputWrapper, #logWrapper { width: 100%; }
   }
 </style>
 </head>
 <body>
-  <h2>☰ Rite Format Generator ☰</h2>
+<h2>☰ Rite Format Generator ☰</h2>
 
-  <label>Host (Discord ID or tag):</label>
-  <input id="host" placeholder="<@320597836758777856>">
-  <button id="saveHostBtn" style="margin-top:10px;">Save Host</button>
+<label>Host (Discord ID or tag):</label>
+<input id="host" placeholder="<@320597836758777856>">
+<button id="saveHostBtn" style="margin-top:10px;">Save Host</button>
 
-  <label>Rite Type:</label>
-  <select id="rite">
-    <option>Ascension Ceremony</option>
-    <option>Korriban Excursion</option>
-    <option>Rite of Advancement</option>
-    <option>Rite of Lore</option>
-    <option>Rite of Doctrine</option>
-    <option>Rite of Passage</option>
-  </select>
+<label>Rite Type:</label>
+<select id="rite">
+  <option>Ascension Ceremony</option>
+  <option>Korriban Excursion</option>
+  <option>Rite of Advancement</option>
+  <option>Rite of Lore</option>
+  <option>Rite of Doctrine</option>
+  <option>Rite of Passage</option>
+</select>
 
-  <label>Server Name / Private Server Code:</label>
-  <input id="server" placeholder="Server name or code">
+<label>Server Name / Private Server Code:</label>
+<input id="server" placeholder="Server name or code">
 
-  <label>Passed Members (separate with commas):</label>
-  <input id="passed" placeholder="<@1111>, <@2222>">
+<label>Passed Members (separate with commas):</label>
+<input id="passed" placeholder="<@1111>, <@2222>">
 
-  <div class="row">
-    <div>
-      <label>Start delay (minutes):</label>
-      <input id="delay" type="number" min="0" value="10">
-    </div>
-    <div>
-      <label>Timestamp style:</label>
-      <select id="tsStyle">
-        <option value="R">Relative (e.g. &lt;t:...:R&gt;)</option>
-        <option value="f">Short (e.g. &lt;t:...:f&gt;)</option>
-        <option value="F">Long (e.g. &lt;t:...:F&gt;)</option>
-      </select>
-    </div>
+<div class="row">
+  <div>
+    <label>Start delay (minutes):</label>
+    <input id="delay" type="number" min="0" value="10">
   </div>
-
-  <div style="margin-top:15px;">
-    <button id="generateBtn">Generate Message</button>
-    <button id="copyBtn">Copy Message</button>
-    <button id="concludeBtn">Conclude Rite</button>
-    <button id="copyLogBtn" style="display:none;">Copy Log</button>
+  <div>
+    <label>Timestamp style:</label>
+    <select id="tsStyle">
+      <option value="R">Relative (e.g. &lt;t:...:R&gt;)</option>
+      <option value="f">Short (e.g. &lt;t:...:f&gt;)</option>
+      <option value="F">Long (e.g. &lt;t:...:F&gt;)</option>
+    </select>
   </div>
+</div>
 
-  <div id="outputContainer">
-    <div id="outputWrapper">
-      <label>Main Output:</label>
-      <textarea id="output" readonly></textarea>
-    </div>
-    <div id="logWrapper">
-      <label>Training Log:</label>
-      <button class="inner-copy" style="width:fit-content;margin-bottom:10px;">Copy Log</button>
-      <textarea id="logOutput" readonly></textarea>
-    </div>
+<div style="margin-top:15px;">
+  <button id="generateBtn">Generate Message</button>
+  <button id="copyBtn">Copy Message</button>
+  <button id="concludeBtn">Conclude Rite</button>
+  <button id="copyLogBtn" style="display:none;">Copy Log</button>
+</div>
+
+<div id="outputContainer">
+  <div id="outputWrapper">
+    <label>Main Output:</label>
+    <textarea id="output" readonly></textarea>
   </div>
+  <div id="logWrapper">
+    <label>Training Log:</label>
+    <button class="inner-copy" style="width:fit-content;margin-bottom:10px;">Copy Log</button>
+    <textarea id="logOutput" readonly></textarea>
+  </div>
+</div>
 
-  <footer>Made by Orpheus1190 (Neptune6866)</footer>
+<footer>Made by Orpheus1190 (Neptune6866)</footer>
 
 <script>
 (function(){
@@ -304,9 +260,68 @@
 
   copyBtn.addEventListener('click', () => copyText(output, copyBtn, "Copied!"));
   copyLogBtn.addEventListener('click', () => copyText(logOutput, copyLogBtn, "Copied!"));
+  const FEEDBACK_KEY = "feedbackShown";
+  function showFeedbackPopup() {
+    if (document.getElementById("feedbackOverlay")) return;
+
+    const overlay = document.createElement("div");
+    overlay.id = "feedbackOverlay";
+    overlay.style.position = "fixed";
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(14,14,16,0.95)";
+    overlay.style.display = "flex";
+    overlay.style.justifyContent = "center";
+    overlay.style.alignItems = "center";
+    overlay.style.zIndex = 9999;
+
+    const popup = document.createElement("div");
+    popup.style.background = "#1e1e22";
+    popup.style.color = "#f4f4f4";
+    popup.style.padding = "20px";
+    popup.style.borderRadius = "10px";
+    popup.style.maxWidth = "400px";
+    popup.style.textAlign = "center";
+    popup.style.position = "relative";
+
+    const message = document.createElement("p");
+    message.innerHTML = 'Hey, if you appreciate this tool, please consider <a href="https://forms.gle/x1RFdQGdXiqP4Ek69" target="_blank" style="color:#ff5555;">giving feedback</a>. This is a one-time popup.';
+
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "✕";
+    closeBtn.style.position = "absolute";
+    closeBtn.style.top = "10px";
+    closeBtn.style.right = "10px";
+    closeBtn.style.background = "#ff5555";
+    closeBtn.style.color = "#fff";
+    closeBtn.style.border = "none";
+    closeBtn.style.borderRadius = "5px";
+    closeBtn.style.padding = "5px 10px";
+    closeBtn.style.cursor = "pointer";
+    closeBtn.addEventListener("click", () => document.body.removeChild(overlay));
+
+    popup.appendChild(closeBtn);
+    popup.appendChild(message);
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+
+    localStorage.setItem(FEEDBACK_KEY, "true");
+  }
+
+  if (!localStorage.getItem(FEEDBACK_KEY)) showFeedbackPopup();
+
+  const footer = document.querySelector("footer");
+  if (footer) {
+    const feedbackBtn = document.createElement("button");
+    feedbackBtn.textContent = "Feedback Form";
+    feedbackBtn.style.marginLeft = "10px";
+    feedbackBtn.addEventListener("click", showFeedbackPopup);
+    footer.appendChild(feedbackBtn);
+  }
 
 })();
 </script>
 </body>
 </html>
-
