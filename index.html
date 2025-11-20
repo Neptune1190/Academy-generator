@@ -34,7 +34,7 @@
     background: #4caf50;
     margin-left: 10px;
   }
-   #copyLogBtn {
+  #copyLogBtn {
     background: #994caf;
     margin-left: 10px;
   }
@@ -53,7 +53,6 @@
     overflow-y: auto;
     white-space: pre;
   }
- 
   #logOutput {
     height: 280px;
   }
@@ -85,7 +84,6 @@
   #logWrapper label {
     margin-bottom: 5px;
   }
- 
   #logWrapper .inner-copy {
     display: none;
   }
@@ -110,6 +108,7 @@
 
   <label>Host (Discord ID or tag):</label>
   <input id="host" placeholder="<@320597836758777856>">
+  <button id="saveHostBtn" style="margin-top:10px;">Save Host</button>
 
   <label>Rite Type:</label>
   <select id="rite">
@@ -142,7 +141,6 @@
     </div>
   </div>
 
-  
   <div style="margin-top:15px;">
     <button id="generateBtn">Generate Message</button>
     <button id="copyBtn">Copy Message</button>
@@ -167,7 +165,7 @@
 <script>
 (function(){
   const roleMap = {
-    "Ascension Ceremony": "<@&1151341324298092614> <@1420908295144607744>",
+    "Ascension Ceremony": "<@&1151341324298092614>",
     "Korriban Excursion": "<@&1151341234615484439>",
     "Rite of Advancement": "<@&1150187179742609408>",
     "Rite of Lore": "<@&1150186944299536404>",
@@ -185,7 +183,7 @@
   };
 
   const sithEmoji = "<:sith:1155672133838581860>";
-  const overseerPing = "<@&1246581690512441497>";
+  const overseerPing = "<@&246581690512441497>";
 
   const output = document.getElementById('output');
   const logOutput = document.getElementById('logOutput');
@@ -194,12 +192,28 @@
   const copyBtn = document.getElementById('copyBtn');
   const copyLogBtn = document.getElementById('copyLogBtn');
   const concludeBtn = document.getElementById('concludeBtn');
+  const saveHostBtn = document.getElementById('saveHostBtn');
+
+  (function loadSavedHost() {
+    const savedHost = localStorage.getItem("savedHost");
+    if (savedHost) document.getElementById("host").value = savedHost;
+  })();
+
+  saveHostBtn.addEventListener("click", () => {
+    const host = document.getElementById("host").value.trim();
+    if (!host) return;
+    localStorage.setItem("savedHost", host);
+    saveHostBtn.textContent = "Saved!";
+    saveHostBtn.disabled = true;
+    setTimeout(() => {
+      saveHostBtn.textContent = "Save Host";
+      saveHostBtn.disabled = false;
+    }, 1500);
+  });
 
   function buildHeader(rite) {
     const noPrefix = ["Ascension Ceremony", "Korriban Excursion"];
-    const title = noPrefix.includes(rite)
-      ? rite
-      : `Rite of ${rite.replace(/^Rite of /i, "").trim()}`;
+    const title = noPrefix.includes(rite) ? rite : `Rite of ${rite.replace(/^Rite of /i, "").trim()}`;
     return `☰  ${sithEmoji}   | ${title} |  ${sithEmoji}  ☰`;
   }
 
@@ -275,8 +289,6 @@
 
     logOutput.value = logContent;
     logWrapper.style.display = "flex";
-
-    
     copyLogBtn.style.display = "inline-block";
   });
 
@@ -285,14 +297,15 @@
     el.select();
     document.execCommand("copy");
     btn.textContent = successText;
-    setTimeout(() => btn.textContent = btn.id === "copyBtn" ? "Copy Message" : "Copy Log", 1500);
+    setTimeout(() => {
+      btn.textContent = btn.id === "copyBtn" ? "Copy Message" : "Copy Log";
+    }, 1500);
   }
 
   copyBtn.addEventListener('click', () => copyText(output, copyBtn, "Copied!"));
   copyLogBtn.addEventListener('click', () => copyText(logOutput, copyLogBtn, "Copied!"));
+
 })();
 </script>
 </body>
 </html>
-
-
