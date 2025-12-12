@@ -51,7 +51,7 @@
   #outputWrapper, #logWrapper { flex: 1 1 450px; display: flex; flex-direction: column; min-width: 350px; }
   #logWrapper { display: none; }
   #logWrapper label { margin-bottom: 5px; }
-  #Wrapper .inner-copy { display: none; }
+  #logWrapper .inner-copy { display: none; }
   footer { text-align: center; margin-top: 25px; color: #777; font-size: 0.9em; }
   @media (max-width: 950px) {
     #outputContainer { flex-direction: column; }
@@ -81,6 +81,11 @@
 
 <label>Passed Members (separate with commas):</label>
 <input id="passed" placeholder="<@1111>, <@2222>">
+
+<label style="margin-top:15px;">
+  <input type="checkbox" id="vcToggle" style="width:auto; margin-right:6px;">
+  Voice Chat Required?
+</label>
 
 <div class="row">
   <div>
@@ -138,8 +143,17 @@
     "Rite of Passage": "RoP"
   };
 
+  const stageLinks = {
+    "Ascension Ceremony": "https://discord.com/channels/1149990472203386880/1446595090708566067",
+    "Korriban Excursion": "",
+    "Rite of Advancement": "https://discord.com/channels/1149990472203386880/1447080124917874759",
+    "Rite of Lore": "https://discord.com/channels/1149990472203386880/1446593874691883119",
+    "Rite of Doctrine": "https://discord.com/channels/1149990472203386880/1446589938807078993",
+    "Rite of Passage": "https://discord.com/channels/873072129787170817/1371352368381431890"
+  };
+
   const sithEmoji = "<:sith:1155672133838581860>";
-  const overseerPing = "<@&1246581690512441497>";
+  const overseerPing = "<@&246581690512441497>";
 
   const output = document.getElementById('output');
   const logOutput = document.getElementById('logOutput');
@@ -149,6 +163,7 @@
   const copyLogBtn = document.getElementById('copyLogBtn');
   const concludeBtn = document.getElementById('concludeBtn');
   const saveHostBtn = document.getElementById('saveHostBtn');
+  const vcToggle = document.getElementById("vcToggle");
 
   (function loadSavedHost() {
     const savedHost = localStorage.getItem("savedHost");
@@ -204,16 +219,23 @@
       `Starting time: ${discordTimestamp}`,
       `Time of conclusion : `,
       `Note: Do not attend if you are on cooldown or at the rank of Youngling III+ in TJO.`,
-      "╰─────────────────────────╯",
-      roleMap[rite] || ""
+      "╰─────────────────────────╯"
     ].join("\n");
 
     let finalContent = mainContent;
+
+    if (vcToggle.checked) {
+      const stage = stageLinks[rite] || "(stage link here)";
+      finalContent += `\nVC IS REQUIRED — JOIN: ${stage}`;
+    }
+
     if (rite === "Rite of Passage") {
       finalContent +=
         "\n\nSith Academy Roblox Group: https://www.roblox.com/groups/14810122/Sith-Academy#!/about" +
         "\nSith Academy Discord Server: https://discord.gg/ZPXTgSWjAS";
     }
+
+    finalContent += `\n${roleMap[rite] || ""}`;
 
     output.value = header + "\n" + finalContent;
 
@@ -335,4 +357,3 @@
 </script>
 </body>
 </html>
-
