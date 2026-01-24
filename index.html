@@ -33,6 +33,7 @@
   #copyBtn { background: #4caf50; margin-left: 10px; }
   #copyLogBtn { background: #994caf; margin-left: 10px; }
   #concludeBtn { background: #2196f3; margin-left: 10px; }
+  #generatePollBtn { background: #ff9900; margin-left: 10px; }
   textarea {
     background: #1e1e22;
     color: #00ff9c;
@@ -104,6 +105,7 @@
 
 <div style="margin-top:15px;">
   <button id="generateBtn">Generate Message</button>
+  <button id="generatePollBtn">Generate Poll</button>
   <button id="copyBtn">Copy Message</button>
   <button id="concludeBtn">Conclude Rite</button>
   <button id="copyLogBtn" style="display:none;">Copy Log</button>
@@ -153,13 +155,13 @@
   };
 
   const sithEmoji = "<:sith:1155672133838581860>";
-  // DONT TOUCH THE FUCKING OVERSEER PING, ITS 1246581690512441497
   const overseerPing = "<@&1246581690512441497>";
 
   const output = document.getElementById('output');
   const logOutput = document.getElementById('logOutput');
   const logWrapper = document.getElementById('logWrapper');
   const generateBtn = document.getElementById('generateBtn');
+  const generatePollBtn = document.getElementById('generatePollBtn');
   const copyBtn = document.getElementById('copyBtn');
   const copyLogBtn = document.getElementById('copyLogBtn');
   const concludeBtn = document.getElementById('concludeBtn');
@@ -243,6 +245,12 @@
     logWrapper.style.display = "none";
     logOutput.value = "";
     copyLogBtn.style.display = "none";
+  });
+
+  generatePollBtn.addEventListener('click', () => {
+    const rite = (document.getElementById('rite').value || "Ascension Ceremony").trim();
+    let pollMsg = `${rite}? ${roleMap[rite] || ""}\n`;
+    output.value = pollMsg;
   });
 
   concludeBtn.addEventListener('click', () => {
@@ -358,5 +366,3 @@
 </script>
 </body>
 </html>
-
-
