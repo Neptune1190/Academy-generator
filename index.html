@@ -67,6 +67,16 @@
 <input id="host" placeholder="<@320597836758777856>">
 <button id="saveHostBtn" style="margin-top:10px;">Save Host</button>
 
+<label>Optional Assistant Role:</label>
+<select id="assistantRole">
+  <option value="">None</option>
+  <option value="Cohost">Cohost</option>
+  <option value="Supervisor">Supervisor</option>
+</select>
+
+<label>Optional Cohost / Supervisor:</label>
+<input id="assistantName" placeholder="Discord tag, ID, or name">
+
 <label>Rite Type:</label>
 <select id="rite">
   <option>Ascension Ceremony</option>
@@ -203,6 +213,10 @@
 
   generateBtn.addEventListener('click', () => {
     const host = (document.getElementById('host').value || "<@320597836758777856>").trim();
+    const assistantRole = document.getElementById('assistantRole').value.trim();
+    const assistantName = document.getElementById('assistantName').value.trim();
+    const assistantLine = assistantRole && assistantName ? `${assistantRole}: ${assistantName}` : null;
+
     const rite = (document.getElementById('rite').value || "Ascension Ceremony").trim();
     const server = (document.getElementById('server').value || "N/A").trim();
     const delayMinutes = Number(document.getElementById('delay').value || 10);
@@ -213,9 +227,16 @@
     const discordTimestamp = buildTimestamp(start, tsStyle);
     const header = buildHeader(rite);
 
-    const mainContent = [
+    const mainContentLines = [
       "╭─────────────────────────╮",
-      `Host: ${host}`,
+      `Host: ${host}`
+    ];
+
+    if (assistantLine) {
+      mainContentLines.push(assistantLine);
+    }
+
+    mainContentLines.push(
       `Location: ${location} | ${server}`,
       `Status: Pending`,
       `Passed: `,
@@ -223,7 +244,9 @@
       `Time of conclusion : `,
       `Note: Do not attend if you are on cooldown or at the rank of Youngling III+ in TJO.`,
       "╰─────────────────────────╯"
-    ].join("\n");
+    );
+
+    const mainContent = mainContentLines.join("\n");
 
     let finalContent = mainContent;
 
@@ -235,7 +258,7 @@
     if (rite === "Rite of Passage") {
       finalContent +=
         "\n\nSith Academy Roblox Group: https://www.roblox.com/groups/14810122/Sith-Academy#!/about" +
-        "\nSith Academy Discord Server: https://discord.gg/aecGwtGu8J";
+        "\nSith Academy Discord Server: https://discord.gg/ZPXTgSWjAS";
     }
 
     finalContent += `\n${roleMap[rite] || ""}`;
@@ -253,58 +276,54 @@
     output.value = pollMsg;
   });
 
-concludeBtn.addEventListener('click', () => {
-  if (!output.value.trim()) return alert("No message to conclude! Generate one first.");
+  concludeBtn.addEventListener('click', () => {
+    if (!output.value.trim()) return alert("No message to conclude! Generate one first.");
 
-  const tsStyle = document.getElementById('tsStyle').value || "R";
-  const rite = (document.getElementById('rite').value || "").trim();
-  const host = (document.getElementById('host').value || "<@320597836758777856>").trim();
-  const passed = document.getElementById('passed').value.trim();
+    const tsStyle = document.getElementById('tsStyle').value || "R";
+    const rite = (document.getElementById('rite').value || "").trim();
+    const host = (document.getElementById('host').value || "<@320597836758777856>").trim();
+    const passed = document.getElementById('passed').value.trim();
 
-  const conclusion = getCurrentDiscordTimestamp(tsStyle);
+    const conclusion = getCurrentDiscordTimestamp(tsStyle);
 
+    let newOutput = output.value
+      .replace(/Status: *Pending/i, "Status: Completed")
+      .replace(/Time of conclusion *:.*$/m, `Time of conclusion : ${conclusion}`);
 
+    if (rite === "Korriban Excursion") {
+      const cooldownDate = new Date(Date.now() + 4 * 60 * 60 * 1000);
+      const cooldownTimestamp = buildTimestamp(cooldownDate, tsStyle);
 
+      newOutput = newOutput.replace(
+        /Time of conclusion :.*\n/,
+        match => match + `Cooldown off: ${cooldownTimestamp}\n`
+      );
+    }
 
-let newOutput = output.value
-  .replace(/Status: *Pending/i, "Status: Completed")
-  .replace(/Time of conclusion *:.*$/m, `Time of conclusion : ${conclusion}`);
+    if (passed) {
+      newOutput = newOutput.replace(/Passed:.*$/m, `Passed: ${passed}`);
+    }
 
-if (rite === "Korriban Excursion") {
-  const cooldownDate = new Date(Date.now() + 6 * 60 * 60 * 1000);
-  const cooldownTimestamp = buildTimestamp(cooldownDate, tsStyle);
+    output.value = newOutput;
 
-  newOutput = newOutput.replace(
-    /Time of conclusion :.*\n/,
-    match => match + `Cooldown off: ${cooldownTimestamp}\n`
-  );
-}
+    const dateString = new Date().toLocaleDateString(undefined, {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
 
-if (passed) {
-  newOutput = newOutput.replace(/Passed:.*$/m, `Passed: ${passed}`);
-}
+    const abbrev = abbrevMap[rite] || "UNK";
 
-output.value = newOutput;
-output.value = newOutput;
+    const logContent = [
+      `Host: ${host}`,
+      `Training: ${abbrev}`,
+      `Passed: ${passed || "None"}`,
+      `Date: ${dateString}`,
+      `${overseerPing}`
+    ].join("\n");
 
-  const dateString = new Date().toLocaleDateString(undefined, {
-    year: 'numeric', month: 'long', day: 'numeric'
+    logOutput.value = logContent;
+    logWrapper.style.display = "flex";
+    copyLogBtn.style.display = "inline-block";
   });
-
-  const abbrev = abbrevMap[rite] || "UNK";
-
-  const logContent = [
-    `Host: ${host}`,
-    `Training: ${abbrev}`,
-    `Passed: ${passed || "None"}`,
-    `Date: ${dateString}`,
-    `${overseerPing}`
-  ].join("\n");
-
-  logOutput.value = logContent;
-  logWrapper.style.display = "flex";
-  copyLogBtn.style.display = "inline-block";
-});
 
   function copyText(el, btn, successText) {
     if (!el.value.trim()) return alert("Nothing to copy!");
@@ -385,6 +404,3 @@ output.value = newOutput;
 </script>
 </body>
 </html>
-
-
-
