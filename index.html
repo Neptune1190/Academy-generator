@@ -284,6 +284,10 @@
     const host = (document.getElementById('host').value || "<@320597836758777856>").trim();
     const passed = document.getElementById('passed').value.trim();
 
+    const assistantRole = document.getElementById('assistantRole').value.trim();
+    const assistantName = document.getElementById('assistantName').value.trim();
+    const assistantLogLine = assistantRole && assistantName ? `${assistantRole}: ${assistantName}` : null;
+
     const conclusion = getCurrentDiscordTimestamp(tsStyle);
 
     let newOutput = output.value
@@ -312,13 +316,22 @@
 
     const abbrev = abbrevMap[rite] || "UNK";
 
-    const logContent = [
-      `Host: ${host}`,
+    const logLines = [
+      `Host: ${host}`
+    ];
+
+    if (assistantLogLine) {
+      logLines.push(assistantLogLine);
+    }
+
+    logLines.push(
       `Training: ${abbrev}`,
       `Passed: ${passed || "None"}`,
       `Date: ${dateString}`,
       `${overseerPing}`
-    ].join("\n");
+    );
+
+    const logContent = logLines.join("\n");
 
     logOutput.value = logContent;
     logWrapper.style.display = "flex";
