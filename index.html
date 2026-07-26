@@ -241,33 +241,32 @@
         "assistant overseer"
       ];
 
-      function validatePerson(value, fieldName) {
-        value = value.trim();
+  function validatePerson(value, fieldName) {
+  value = value.trim();
 
-        if (!value) return true;
+  if (!value) return true;
 
-        if (/<@&\d+>/.test(value)) {
-          alert(`${fieldName} cannot be a role mention.`);
-          return false;
-        }
+  if (/<@&\d+>/.test(value)) {
+    alert(`${fieldName} cannot be a role mention.`);
+    return false;
+  }
 
-        const lower = value.toLowerCase();
+  const cleaned = value
+    .toLowerCase()
+    .replace(/^@/, "")
+    .trim();
 
-        for (const role of forbiddenRoles) {
-          if (lower.includes(role)) {
-            alert(`${fieldName} appears to contain a role name.`);
-            return false;
-          }
-        }
+  const firstWord = cleaned.split(/\s+/)[0];
 
-        if (value.startsWith("@") && !/^<@!?\d+>$/.test(value)) {
-          alert(`${fieldName} must be a user mention or Discord ID.`);
-          return false;
-        }
+  for (const role of forbiddenRoles) {
+    if (firstWord === role || firstWord === role.replace(/\s+/g, "")) {
+      alert(`${fieldName} cannot contain a role name.`);
+      return false;
+    }
+  }
 
-        return true;
-      }
-
+  return true;
+}
       function validateHost() {
         const host = document.getElementById("host").value.trim();
 
