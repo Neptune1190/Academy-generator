@@ -148,9 +148,9 @@
 
   <button id="saveHostBtn" style="margin-top:10px;">Save Host</button>
   <button id="discordLoginBtn" style="margin-top:0;">
-  Login with Discord
-</button>
-  
+    Login with Discord
+  </button>
+
 
   <div id="discordStatus" style="margin-top:8px;color:#777;"></div>
 
@@ -268,6 +268,17 @@
         return true;
       }
 
+      function validateHost() {
+        const host = document.getElementById("host").value.trim();
+
+        if (!host) {
+          alert("Please select a host before continuing.");
+          return false;
+        }
+
+        return validatePerson(host, "Host");
+      }
+
       const abbrevMap = {
         "Ascension Ceremony": "AC",
         "Korriban Excursion": "KE",
@@ -342,7 +353,7 @@
 
         window.history.replaceState({}, document.title, window.location.pathname);
       })();
-      
+
       saveHostBtn.addEventListener("click", () => {
         const host = document.getElementById("host").value.trim();
         if (!host) return;
@@ -377,7 +388,9 @@
           alert("Please select a class before generating.");
           return;
         }
-        const host = (document.getElementById('host').value || "None").trim();
+        const host = document.getElementById('host').value.trim();
+
+        if (!validateHost()) return;
         if (!validatePerson(host, "Host")) return;
         const assistantRole = document.getElementById('assistantRole').value.trim();
         const assistantName = document.getElementById('assistantName').value.trim();
