@@ -482,7 +482,7 @@
           .replace(/Time of conclusion *:.*$/m, `Time of conclusion : ${conclusion}`);
 
         if (rite === "Korriban Excursion") {
-          const cooldownDate = new Date(Date.now() + 4 * 60 * 60 * 1000);
+          const cooldownDate = new Date(Date.now() + 6 * 60 * 60 * 1000);
           const cooldownTimestamp = buildTimestamp(cooldownDate, tsStyle);
 
           newOutput = newOutput.replace(
